@@ -14,7 +14,7 @@ const PrivateRoom = ({ children }) => {
     async function authenticateUser() {
       const res = await axios
         .get(
-          `http://127.0.0.1:8000/api/check-user-in-conversation/${conversationName}/check_user/`,
+          `http://127.0.0.1:8000/api/chats/${conversationName}/check_user/`,
           {
             headers: {
               Authorization: `Token ${user?.token}`,

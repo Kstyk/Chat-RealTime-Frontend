@@ -18,6 +18,7 @@ const Chat = () => {
   const [messageHistory, setMessageHistory] = useState([]);
   const [page, setPage] = useState(2);
   const [hasMoreMessages, setHasMoreMessages] = useState(false);
+  const [users, setUsers] = useState([]);
 
   const { conversationName } = useParams();
   const navigate = useNavigate();
@@ -27,20 +28,42 @@ const Chat = () => {
 
   // videocall
   const {
+    peerId,
     call,
     startVideoCall,
     remotePeerIdValue,
     setRemotePeerIdValue,
-    peerId,
-    setPeerId,
     remoteVideoRef,
     currentUserVideoRef,
-    peerInstance,
     modalIsOpen,
     setIsOpen,
     callButton,
     setCallButton,
+    toggleAudio,
+    toggleCamera,
+    audioEnabled,
+    isCameraOn,
+    isScreenSharing,
+    toggleScreenSharing,
   } = usePeerJS(conversationName);
+
+  useEffect(() => {
+    async function fetchUsers() {
+      const res = await axios.get(
+        `http://127.0.0.1:8000/api/chats/get-users/${conversationName}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setUsers(res.data);
+    }
+
+    fetchUsers();
+  }, []);
 
   const { readyState, sendJsonMessage } = useWebSocket(
     user ? `ws://127.0.0.1:8000/${conversationName}/` : null,
@@ -66,6 +89,7 @@ const Chat = () => {
             setHasMoreMessages(data.has_more);
             break;
           default:
+            bash.error("Unknown message type!");
             break;
         }
       },
@@ -143,42 +167,16 @@ const Chat = () => {
     >
       {/* Token usera to: {user.token} */}
       <br />
-      <span>The WebSocket is currently {connectionStatus}</span>
+      {/* {console.log("Websocket status: " + connectionStatus)} */}
       <hr />
-      <input
-        type="text"
-        name="message"
-        placeholder="message"
-        onChange={handleChangeMessage}
-        value={message}
-        className="shadow-sm sm:text-sm border-gray-300 bg-gray-100 rounded-md"
-      />
-      <button className="ml-3 bg-gray-300 px-3 py-1" onClick={handleSubmit}>
-        Submit
-      </button>
-      <button className="ml-3 bg-gray-300 px-3 py-1" onClick={startVideoCall}>
-        Call
-      </button>
-      {callButton == true ? (
-        <button
-          className="ml-3 bg-gray-300 px-3 py-1"
-          onClick={(e) => openModal()}
-        >
-          Answer call
-        </button>
-      ) : (
-        ""
-      )}
-      {callButton == true ? (
-        <button
-          className="ml-3 bg-gray-300 px-3 py-1"
-          onClick={(e) => setCallButton(null)}
-        >
-          End call
-        </button>
-      ) : (
-        ""
-      )}
+      <h1 className="ml-5 text-2xl">
+        Konwersujesz z{" "}
+        {users.map((item) => {
+          if (item.username != user.username) {
+            return item.username;
+          }
+        })}
+      </h1>
       <hr />
       <ul className="mt-3 flex flex-col-reverse relative w-full border border-gray-200 overflow-y-auto p-6"></ul>
       <div
@@ -201,22 +199,101 @@ const Chat = () => {
           </InfiniteScroll>
         </div>
       </div>
+      {/* przyciski */}
+      <div className="mt-5 ml-5">
+        <input
+          type="text"
+          name="message"
+          placeholder="message"
+          onChange={handleChangeMessage}
+          value={message}
+          className="shadow-sm sm:text-sm border-gray-300 bg-gray-100 rounded-none h-10 w-6/12 pl-5"
+        />
+        <button
+          className="ml-3 bg-gray-100 px-3 py-1 h-10 "
+          onClick={handleSubmit}
+        >
+          Submit
+        </button>
+        <button
+          className="ml-3 bg-gray-100 px-3 py-1 h-10 "
+          onClick={startVideoCall}
+        >
+          Call
+        </button>
+        {callButton == true ? (
+          <button
+            className="ml-3 bg-gray-100 px-3 py-1 h-10 "
+            onClick={(e) => openModal()}
+          >
+            Answer call
+          </button>
+        ) : (
+          ""
+        )}
+        {callButton == true ? (
+          <button
+            className="ml-3 bg-gray-100 px-3 py-1 h-10 "
+            onClick={(e) => setCallButton(null)}
+          >
+            End call
+          </button>
+        ) : (
+          ""
+        )}
+      </div>
       <Modal
         isOpen={modalIsOpen}
         onAfterOpen={afterOpenModal}
         onRequestClose={closeModal}
         contentLabel="Example Modal"
+        className="bg-black flex flex-row relative"
+        style={{
+          content: {
+            height: "94vh",
+            marginTop: "3vh",
+            marginBottom: "3vh",
+            width: "94%",
+            marginLeft: "3%",
+            marginRight: "3%",
+          },
+        }}
       >
-        <div>
-          <h1>Remote</h1>
-          <video preload="none" ref={remoteVideoRef} />
+        <div className="h-full w-10/12 ">
+          <video
+            preload="none"
+            ref={remoteVideoRef}
+            className="w-full h-full"
+          />
         </div>
-        <div>
-          <h1>Yours</h1>
-          <video preload="none" ref={currentUserVideoRef} />
+        <div className="w-2/12 bg-slate-500 h-full flex flex-col justify-between text-lg uppercase font-semibold">
+          <div className="border-b-2 border-white h-1/4 flex justify-center items-center hover:bg-slate-700">
+            Zakończ połączenie
+          </div>
+          <div
+            onClick={() => toggleCamera()}
+            className="border-b-2 border-white h-1/4 flex justify-center items-center hover:bg-slate-700"
+          >
+            {isCameraOn ? "Wyłącz" : "Włącz"} kamerę
+          </div>
+          <div
+            onClick={() => toggleAudio()}
+            className="border-b-2 border-white h-1/4 flex justify-center items-center hover:bg-slate-700"
+          >
+            {audioEnabled ? "Wyłącz" : "Włącz"} mikrofon
+          </div>
+          <div
+            onClick={() => toggleScreenSharing()}
+            className="h-1/4 flex justify-center items-center hover:bg-slate-700"
+          >
+            {isScreenSharing ? "Zakończ udostępnianie" : "Udostępnij ekran"}
+          </div>
         </div>
-        <h1>Current user id is {peerId}</h1>
-        <h1>Remote peer user id is {remotePeerIdValue}</h1>
+        <video
+          preload="none"
+          ref={currentUserVideoRef}
+          className="absolute bottom-0 left-0 w-2/12"
+        />
       </Modal>
     </motion.div>
   );

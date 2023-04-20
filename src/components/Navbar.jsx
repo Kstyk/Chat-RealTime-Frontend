@@ -10,7 +10,7 @@ const Navbar = () => {
     <nav>
       <div className="flex flex-row items-center h-20 bg-blue-800 w-screen text-white">
         <Link to="/" className="text-white text-xl px-5 whitespace-nowrap">
-          App Name
+          Chat Video Call
         </Link>
         <div className="text-slate-300 space-x-5 mx-10 w-screen">
           {user ? (
@@ -18,18 +18,14 @@ const Navbar = () => {
               <Link className="hover:text-slate-100" to="/">
                 Home
               </Link>
-              <Link className="hover:text-slate-100" to="/protected">
-                Protected Page
-              </Link>
+
               <Link className="hover:text-slate-100" to="/chats">
-                Conversations
+                People to write
               </Link>
               <Link className="hover:text-slate-100" to="/conversations">
                 Active Conversations
               </Link>
-              <Link className="hover:text-slate-100" to="/chats/abc">
-                Create room
-              </Link>
+
               <button
                 className="float-right hover:text-slate-100"
                 onClick={logout}

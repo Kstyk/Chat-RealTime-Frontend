@@ -8,7 +8,6 @@ import Footer from "./components/Footer";
 import Home from "./views/Home";
 import Register from "./views/Register";
 import Login from "./views/Login";
-import ProtectedPage from "./views/ProtectedPage";
 import Chat from "./components/Chat";
 import ActiveConversations from "./components/ActiveConversations";
 import Conversations from "./components/Conversations";
@@ -26,14 +25,6 @@ function App() {
         <Navbar />
         <AnimatePresence>
           <Routes location={location} key={location.pathname}>
-            <Route
-              path="/protected"
-              element={
-                <PrivateRoute>
-                  <ProtectedPage />
-                </PrivateRoute>
-              }
-            />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/home" element={<Home />} />

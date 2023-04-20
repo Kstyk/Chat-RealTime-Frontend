@@ -22,24 +22,29 @@ const Message = ({ message }) => {
           : "justify-end"
       )}
     >
-      <div
-        className={classNames(
-          "relative max-w-xl rounded-lg px-2 py-1 text-gray-700 shadow",
-          user?.username === message.to_user.username ? "" : "bg-gray-100"
-        )}
-      >
-        <div className="flex items-end">
-          <span className="block">{message.content}</span>
-          <span
-            className="ml-2"
-            style={{
-              fontSize: "0.6rem",
-              lineHeight: "1rem",
-            }}
-          >
-            {formatMessageTimestamp(message.timestamp)}
-          </span>
+      <div className="flex flex-col">
+        <div
+          className={classNames(
+            "relative max-w-xl rounded-lg px-2 py-1 text-gray-700 shadow",
+            user?.username === message.to_user.username
+              ? "bg-gray-200"
+              : "bg-gray-100"
+          )}
+        >
+          <div className="flex items-end">
+            <span className="block">{message.content}</span>
+            <span
+              className="ml-2"
+              style={{
+                fontSize: "0.6rem",
+                lineHeight: "1rem",
+              }}
+            >
+              {formatMessageTimestamp(message.timestamp)}
+            </span>
+          </div>
         </div>
+        <span className="text-xs">Sended by {message.from_user.username}</span>
       </div>
     </li>
   );

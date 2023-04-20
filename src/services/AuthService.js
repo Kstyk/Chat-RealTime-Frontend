@@ -1,5 +1,8 @@
 import axios from "axios";
 
+// const url = "https://limitless-sands-86427.herokuapp.com";
+const url = "http://127.0.0.1:8000";
+
 const UserModel = {
   id: "",
   username: "",
@@ -12,7 +15,7 @@ class AuthService {
   }
 
   async login(username, password) {
-    const response = await axios.post("http://127.0.0.1:8000/api/users/auth/", {
+    const response = await axios.post(url + "/api/users/auth/", {
       username,
       password,
     });
@@ -25,7 +28,7 @@ class AuthService {
 
   async register(username, password, email, phone_number) {
     const response = await axios.post(
-      "http://127.0.0.1:8000/api/users/",
+      url + "/api/users/",
       {
         username,
         password,

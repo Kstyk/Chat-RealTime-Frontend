@@ -13,6 +13,11 @@ const usePeerJS = (conversationName) => {
   const remoteVideoRef = useRef(null);
   const currentUserVideoRef = useRef(null);
   const peerInstance = useRef(null);
+
+  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [isCameraOn, setIsCameraOn] = useState(true);
+  const [isScreenSharing, setIsScreenSharing] = useState(false);
+
   const { user } = useContext(AuthContext);
 
   const { sendJsonMessage } = useWebSocket(
@@ -26,7 +31,6 @@ const usePeerJS = (conversationName) => {
         switch (data.type) {
           case "received_peer":
             setRemotePeerIdValue(data.peer);
-            console.log(data.peer);
             setCallButton(true);
             break;
           default:
@@ -44,7 +48,6 @@ const usePeerJS = (conversationName) => {
       setPeerId(id);
       setIsOpen(true);
 
-      // console.log(id);
       sendJsonMessage({
         type: "peer",
         peer: id,
@@ -60,11 +63,15 @@ const usePeerJS = (conversationName) => {
 
       getUserMedia({ video: true, audio: true }, (mediaStream) => {
         currentUserVideoRef.current.srcObject = mediaStream;
-        currentUserVideoRef.current.play();
+        currentUserVideoRef.current.onloadedmetadata = () => {
+          currentUserVideoRef.current.play();
+        };
         call.answer(mediaStream);
         call.on("stream", function (remoteStream) {
           remoteVideoRef.current.srcObject = remoteStream;
-          remoteVideoRef.current.play();
+          remoteVideoRef.current.onloadedmetadata = () => {
+            remoteVideoRef.current.play();
+          };
         });
       });
     });
@@ -84,15 +91,97 @@ const usePeerJS = (conversationName) => {
 
     getUserMedia({ video: true, audio: true }, (mediaStream) => {
       currentUserVideoRef.current.srcObject = mediaStream;
-      currentUserVideoRef.current.play();
+      currentUserVideoRef.current.onloadedmetadata = () => {
+        currentUserVideoRef.current.play();
+      };
 
-      const call = peerInstance.current.call(remotePeerId, mediaStream);
-
-      call.on("stream", (remoteStream) => {
-        remoteVideoRef.current.srcObject = remoteStream;
-        remoteVideoRef.current.play();
+      const call = peerInstance.current.call(remotePeerId, mediaStream, {
+        metadata: {
+          callerPeerId: peerId,
+        },
       });
+
+      call.on(
+        "stream",
+        (remoteStream) => {
+          remoteVideoRef.current.srcObject = remoteStream;
+          remoteVideoRef.current.onloadedmetadata = () => {
+            remoteVideoRef.current.play();
+          };
+          console.log("metadata:", call.metadata); // wyświetlenie obiektu metadata w konsoli
+        },
+        function (err) {
+          console.log("Failed to get local stream", err);
+        }
+      );
     });
+  };
+
+  const toggleAudio = () => {
+    console.log("remote peer: " + remotePeerIdValue);
+    console.log("peer: " + peerId);
+
+    setAudioEnabled(!audioEnabled);
+    const audioTracks = currentUserVideoRef.current.srcObject.getAudioTracks();
+    audioTracks.forEach((track) => {
+      track.enabled = !track.enabled;
+    });
+  };
+
+  const toggleCamera = () => {
+    const tracks = currentUserVideoRef.current.srcObject.getTracks();
+    tracks.forEach((track) => {
+      if (track.kind === "video") {
+        track.enabled = !isCameraOn;
+        setIsCameraOn(!isCameraOn);
+      }
+    });
+  };
+
+  const toggleScreenSharing = async () => {
+    try {
+      if (!isScreenSharing) {
+        console.log("remote peer id in sharing: " + remotePeerIdValue);
+        const stream = await navigator.mediaDevices.getDisplayMedia({
+          video: true,
+        });
+        currentUserVideoRef.current.srcObject = stream;
+        currentUserVideoRef.current.play();
+
+        const call = peerInstance.current.call(remotePeerIdValue, stream);
+
+        call.on("stream", (remoteStream) => {
+          remoteVideoRef.current.srcObject = remoteStream;
+          remoteVideoRef.current.play();
+        });
+
+        setIsScreenSharing(true);
+      } else {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: true,
+        });
+
+        currentUserVideoRef.current.srcObject = stream;
+        currentUserVideoRef.current.play();
+
+        const call = peerInstance.current.call(remotePeerIdValue, stream);
+        call.on("stream", (remoteStream) => {
+          tracks = remoteStream.getTracks();
+
+          for (let i = 0; i < tracks.length; i++) {
+            tracks[i].stop();
+          }
+
+          remoteVideoRef.current.srcObject = remoteStream;
+          remoteVideoRef.current.play();
+        });
+
+        setIsScreenSharing(false);
+      }
+    } catch (err) {
+      console.error("Error sharing screen:", err);
+    }
   };
 
   return {
@@ -109,6 +198,12 @@ const usePeerJS = (conversationName) => {
     setIsOpen,
     callButton,
     setCallButton,
+    toggleAudio,
+    toggleCamera,
+    isCameraOn,
+    audioEnabled,
+    isScreenSharing,
+    toggleScreenSharing,
   };
 };
 
