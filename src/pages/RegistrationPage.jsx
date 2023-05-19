@@ -65,8 +65,6 @@ const RegistrationPage = () => {
       });
   };
 
-  console.log("backend errors: " + backendErrors?.email);
-
   const handleError = (errors) => {};
 
   useEffect(() => {
@@ -96,6 +94,7 @@ const RegistrationPage = () => {
       >
         <h1 className="font-semibold text-2xl">Rejestracja</h1>
         <hr />
+
         <div className="items-center">
           <label className="float-left text-xl" htmlFor="email">
             Email
@@ -108,6 +107,7 @@ const RegistrationPage = () => {
             {...register("email", registerOptions.email)}
           />
           <small className="text-danger">
+            {console.log(errors)}
             {errors?.email && errors.email.message}
             {backendErrors?.email?.map((e, i) => (
               <span key={i}>
