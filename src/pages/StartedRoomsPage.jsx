@@ -14,7 +14,6 @@ const StartedRoomsPage = () => {
     await api
       .get("/api/rooms/all-rooms/")
       .then((res) => {
-        console.log(res.data);
         setRooms(res.data);
       })
       .catch((err) => {
@@ -28,11 +27,11 @@ const StartedRoomsPage = () => {
 
   return (
     <ul>
-      {rooms.map((room) => (
+      {rooms.map((room, i) => (
         <li key={room.room_id}>
           {room.users.map((u) =>
             u.email != user.email ? (
-              <Link to={`/rooms/${room.room_id}/`}>
+              <Link key={user.email} to={`/rooms/${room.room_id}/`}>
                 {u.first_name} {u.last_name} - {u.email}
               </Link>
             ) : (

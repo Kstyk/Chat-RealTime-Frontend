@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Message from "./Message";
 import ChatLoader from "./ChatLoader";
 import usePeerJS from "../utils/usePeerJS";
@@ -15,6 +15,7 @@ const Chat = () => {
   const [page, setPage] = useState(1);
   const [hasMoreMessages, setHasMoreMessages] = useState(false);
   const [receiver, setReceiver] = useState(null);
+  const nav = useNavigate();
 
   const { roomId } = useParams();
   const { user, authTokens } = useContext(AuthContext);
@@ -46,13 +47,15 @@ const Chat = () => {
     {
       queryParams: {
         userId: user ? user.user_id : "",
+        roomId: roomId,
       },
       onOpen: (e) => {
         console.log("connected");
       },
       onClose: (e) => {
+        console.log(e);
         console.log("disconnected");
-        // navigate("/");
+        // nav("/");
       },
       onMessage: (e) => {
         const data = JSON.parse(e.data);
@@ -88,6 +91,12 @@ const Chat = () => {
         setHasMoreMessages(res.data.next !== null);
         setPage(page + 1);
         setMessageHistory((prev) => prev.concat(res.data.results));
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log(err.response.data.detail);
+        console.log(err.response.data);
+        nav("/");
       });
   };
 
@@ -99,9 +108,11 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    fetchMessages();
-    fetchReceiver();
-  }, []);
+    if (readyState == "Open") {
+      fetchMessages();
+      fetchReceiver();
+    }
+  }, [readyState]);
 
   function handleChangeMessage(e) {
     setMessage(e.target.value);
