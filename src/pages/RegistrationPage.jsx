@@ -87,13 +87,12 @@ const RegistrationPage = () => {
   };
 
   return (
-    <section className="mb-auto w-10/12 rounded-2xl border-blue-800 bg-slate-100 mx-auto px-10 py-5 mt-10">
+    <section className="bg-white h-full flex justify-center pt-10">
       <form
         onSubmit={handleSubmit(onSubmit, handleError)}
-        className="flex flex-col space-y-2"
+        className="flex flex-col space-y-4 w-8/12 m-auto h-full"
       >
-        <h1 className="font-semibold text-2xl">Rejestracja</h1>
-        <hr />
+        <h1 className="font-semibold text-2xl pb-3 border-b-2">Rejestracja</h1>
 
         <div className="items-center">
           <label className="float-left text-xl" htmlFor="email">
@@ -101,7 +100,7 @@ const RegistrationPage = () => {
           </label>
           <input
             type="email"
-            className="float-right w-2/3 h-10 px-2"
+            className="float-right w-2/4 h-10 px-2 border-b-2"
             name="email"
             id="email"
             {...register("email", registerOptions.email)}
@@ -122,7 +121,7 @@ const RegistrationPage = () => {
           </label>
           <input
             type="password"
-            className="float-right w-2/3 h-10 px-2"
+            className="float-right w-2/4 h-10 px-2 border-b-2"
             name="password"
             id="password"
             {...register("password", registerOptions.password)}
@@ -142,7 +141,7 @@ const RegistrationPage = () => {
           </label>
           <input
             type="password"
-            className="float-right w-2/3 h-10 px-2"
+            className="float-right w-2/4 h-10 px-2 border-b-2"
             id="confirm_password"
             {...register("confirm_password", registerOptions.confirm_password)}
           />
@@ -157,7 +156,7 @@ const RegistrationPage = () => {
           <input
             name="first_name"
             id="first_name"
-            className="float-right w-2/3 h-10 px-2"
+            className="float-right w-2/4 h-10 px-2 border-b-2"
             type="text"
             {...register("first_name", registerOptions.first_name)}
           />
@@ -177,7 +176,7 @@ const RegistrationPage = () => {
           <input
             name="last_name"
             id="last_name"
-            className="float-right w-2/3 h-10 px-2"
+            className="float-right w-2/4 h-10 px-2 border-b-2"
             type="text"
             {...register("last_name", registerOptions.last_name)}
           />
@@ -201,7 +200,7 @@ const RegistrationPage = () => {
             rules={registerOptions.role}
             render={({ field }) => (
               <Select
-                className="float-right w-2/3 h-10"
+                className="float-right w-2/4 h-10 px-2"
                 options={selectOptions}
                 {...field}
                 label="Text field"
@@ -216,7 +215,8 @@ const RegistrationPage = () => {
             ))}
           </small>
         </div>
-        <button className="text-blue-800 hover:text-white w-1/6 bg-white hover:bg-blue-800 border border-blue-800">
+        <hr />
+        <button className="border-2 w-2/12 pt-2 pb-2 hover:border-blue-800">
           Zarejestruj
         </button>
       </form>

@@ -12,7 +12,7 @@ import Modal from "react-modal";
 const Chat = () => {
   const [message, setMessage] = useState("");
   const [messageHistory, setMessageHistory] = useState([]);
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState(2);
   const [hasMoreMessages, setHasMoreMessages] = useState(false);
   const [receiver, setReceiver] = useState(null);
   const nav = useNavigate();
@@ -144,31 +144,29 @@ const Chat = () => {
   }
 
   return (
-    <>
+    <div className="flex flex-col h-full">
       {/* <div>Status: {connectionStatus}</div> */}
       <h1>{receiver}</h1>
       <div
         id="scrollableDiv"
-        className="h-4/5 mt-3 flex flex-col-reverse relative w-full border border-gray-200 overflow-y-auto p-6"
+        className="h-[calc(100vh-280px)] mt-3 flex flex-col-reverse relative w-full border border-gray-200 overflow-y-auto p-6"
       >
-        <div>
-          <InfiniteScroll
-            dataLength={messageHistory.length}
-            next={fetchMessages}
-            className="flex flex-col-reverse"
-            inverse={true}
-            hasMore={hasMoreMessages}
-            loader={<ChatLoader />}
-            scrollableTarget="scrollableDiv"
-          >
-            {messageHistory.map((message) => (
-              <Message key={message.id} message={message} />
-            ))}
-          </InfiniteScroll>
-        </div>
+        <InfiniteScroll
+          dataLength={messageHistory.length}
+          next={fetchMessages}
+          className="flex flex-col-reverse"
+          inverse={true}
+          hasMore={hasMoreMessages}
+          loader={<ChatLoader />}
+          scrollableTarget="scrollableDiv"
+        >
+          {messageHistory.map((message) => (
+            <Message key={message.id} message={message} />
+          ))}
+        </InfiniteScroll>
       </div>
       {/* przyciski */}
-      <div className="ml-5 h-1/5 flex items-center">
+      <div className="ml-5 mt-10 flex items-center">
         <input
           type="text"
           name="message"
@@ -263,7 +261,7 @@ const Chat = () => {
           className="absolute bottom-0 left-0 w-2/12"
         />
       </Modal>
-    </>
+    </div>
   );
 };
 

@@ -25,7 +25,15 @@ const ProfilePage = () => {
     fetchUsers();
   }, []);
 
-  return <div>ProfilePage - Hey {user && user.email}</div>;
+  return (
+    <section className="bg-white h-full flex pt-10">
+      <div className="w-8/12 m-auto h-full">
+        <h1 className="font-semibold text-2xl pb-3 border-b-2">Twój profil</h1>
+
+        <div>ProfilePage - Hey {user && user.email}</div>
+      </div>
+    </section>
+  );
 };
 
 export default ProfilePage;

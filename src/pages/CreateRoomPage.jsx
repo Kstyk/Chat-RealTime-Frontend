@@ -13,7 +13,7 @@ const CreateRoomPage = () => {
 
   const fetchUsers = async () => {
     await api
-      .get("/api/users/")
+      .get("/api/rooms/users-without-room/")
       .then((res) => {
         setUsers(res.data);
         console.log(res.data);
@@ -45,22 +45,36 @@ const CreateRoomPage = () => {
   };
 
   return (
-    <div className="container pl-5 pt-5">
-      {error != null ? (
-        <div className="bg-red-300 w-100 h-10">{error}</div>
-      ) : (
-        ""
-      )}
-      <ul>
-        {users.map((user) => (
-          <li key={user.email} onClick={() => setSelectedUserEmail(user.email)}>
-            {user.email}
-          </li>
-        ))}
-      </ul>
-      <button className="p-10 border-black border-2" onClick={createRoom}>
-        Create room
-      </button>
+    <div className="bg-white h-full flex pt-10">
+      <div className="w-8/12 m-auto h-full">
+        <h1 className="font-semibold text-2xl pb-3 border-b-2">Stwórz pokój</h1>
+        {error != null ? (
+          <div className="bg-red-300 w-100 h-10">{error}</div>
+        ) : (
+          ""
+        )}
+        <ul>
+          {users.map((user) => (
+            <li
+              key={user.email}
+              onClick={() => setSelectedUserEmail(user.email)}
+              className={
+                selectedUserEmail == user.email
+                  ? "pt-2 pb-2 border-b-2 font-bold"
+                  : "pt-2 pb-2 border-b-2 cursor-pointer"
+              }
+            >
+              {user.email}
+            </li>
+          ))}
+        </ul>
+        <button
+          className="border-2 w-2/12 pt-2 pb-2 mt-5 hover:border-blue-800"
+          onClick={createRoom}
+        >
+          <span>Stwórz pokój</span>
+        </button>
+      </div>
     </div>
   );
 };

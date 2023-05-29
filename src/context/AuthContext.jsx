@@ -20,35 +20,33 @@ export const AuthProvider = ({ children }) => {
   );
   const nav = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   let loginUser = async (e) => {
     e.preventDefault();
-    console.log(e.target.email.value);
-    console.log("Form submitted");
-    let response = await axios.post(
-      "http://127.0.0.1:8000/api/auth/token/",
-      {
-        email: e.target.email.value,
-        password: e.target.password.value,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
+
+    let response = await axios
+      .post(
+        "http://127.0.0.1:8000/api/auth/token/",
+        {
+          email: e.target.email.value,
+          password: e.target.password.value,
         },
-      }
-    );
-
-    let data = response.data;
-    console.log("data", data);
-
-    if (response.status === 200) {
-      setAuthTokens(data);
-      setUser(jwtDecode(data.access));
-      localStorage.setItem("authTokens", JSON.stringify(data));
-      nav("/profile");
-    } else {
-      alert("Something went wrong");
-    }
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then((res) => {
+        setAuthTokens(res.data);
+        setUser(jwtDecode(res.data.access));
+        localStorage.setItem("authTokens", JSON.stringify(res.data));
+        nav("/profile");
+      })
+      .catch((err) => {
+        setError(err.response.data.error);
+      });
   };
 
   let logoutUser = () => {
@@ -65,6 +63,7 @@ export const AuthProvider = ({ children }) => {
     setUser: setUser,
     loginUser: loginUser,
     logoutUser: logoutUser,
+    error: error,
   };
 
   useEffect(() => {

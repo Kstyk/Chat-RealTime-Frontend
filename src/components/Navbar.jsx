@@ -8,12 +8,12 @@ const Navbar = () => {
     <nav>
       <div className="flex flex-row items-center h-20 bg-blue-800 w-screen text-white">
         <Link to="/" className="text-white text-xl px-5 whitespace-nowrap">
-          Home
+          Strona główna
         </Link>
         {user ? (
           <>
             <Link to="/profile" className="hover:text-slate-100 px-[5px]">
-              Profile
+              Profil
             </Link>
             <Link to="/create-room" className="hover:text-slate-100 px-[5px]">
               Stwórz nowy pokój

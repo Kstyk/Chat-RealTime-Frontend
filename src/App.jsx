@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -9,6 +8,7 @@ import { AuthProvider } from "./context/AuthContext";
 import RegistrationPage from "./pages/RegistrationPage";
 import CreateRoomPage from "./pages/CreateRoomPage";
 import StartedRoomsPage from "./pages/StartedRoomsPage";
+import Room from "./components/Room";
 import Chat from "./components/Chat";
 
 function App() {
@@ -48,7 +48,7 @@ function App() {
             path="/rooms/:roomId"
             element={
               <PrivateRoute>
-                <Chat />
+                <Room />
               </PrivateRoute>
             }
           />

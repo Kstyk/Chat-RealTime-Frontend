@@ -47,11 +47,15 @@ const usePeerJS = (roomID) => {
       setPeerId(id);
       setIsOpen(true);
 
+      console.log("before send");
+
       sendJsonMessage({
         type: "peer",
         peer: id,
         token: user.token,
       });
+
+      console.log("after send");
     });
 
     peer.on("call", (call) => {
