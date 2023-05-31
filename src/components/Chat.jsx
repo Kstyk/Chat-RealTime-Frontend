@@ -14,7 +14,6 @@ const Chat = () => {
   const [messageHistory, setMessageHistory] = useState([]);
   const [page, setPage] = useState(2);
   const [hasMoreMessages, setHasMoreMessages] = useState(false);
-  const [receiver, setReceiver] = useState(null);
   const nav = useNavigate();
 
   const { roomId } = useParams();
@@ -100,19 +99,11 @@ const Chat = () => {
       });
   };
 
-  const fetchReceiver = async () => {
-    await api.get(`api/rooms/${roomId}`).then((res) => {
-      const users = res.data.users;
-      users.map((u) => (u != user.email ? setReceiver(u) : ""));
-    });
-  };
-
   useEffect(() => {
     if (readyState == "Open") {
       fetchMessages();
-      fetchReceiver();
     }
-  }, [readyState]);
+  }, [messageHistory]);
 
   function handleChangeMessage(e) {
     setMessage(e.target.value);
@@ -146,10 +137,9 @@ const Chat = () => {
   return (
     <div className="flex flex-col h-full">
       {/* <div>Status: {connectionStatus}</div> */}
-      <h1>{receiver}</h1>
       <div
         id="scrollableDiv"
-        className="h-[calc(100vh-280px)] mt-3 flex flex-col-reverse relative w-full border border-gray-200 overflow-y-auto p-6"
+        className="h-[calc(100vh-260px)] mt-3 flex flex-col-reverse relative w-full border border-gray-200 border-t-0 overflow-y-auto p-6"
       >
         <InfiniteScroll
           dataLength={messageHistory.length}
@@ -170,39 +160,39 @@ const Chat = () => {
         <input
           type="text"
           name="message"
-          placeholder="message"
+          placeholder="Napisz wiadomość..."
           onChange={handleChangeMessage}
           value={message}
-          className="shadow-sm sm:text-sm border-gray-300 bg-gray-100 rounded-none h-10 w-6/12 pl-5"
+          className="shadow-sm sm:text-sm border-black border-[1px] bg-gray-100 rounded-none h-10 w-6/12 pl-5"
         />
         <button
-          className="ml-3 bg-gray-100 px-3 py-1 h-10 "
+          className="ml-3 bg-gray-100 px-3 py-1 h-10 border-black border-[1px]"
           onClick={handleSubmit}
         >
-          Submit
+          Wyślij
         </button>
         <button
-          className="ml-3 bg-gray-100 px-3 py-1 h-10 "
+          className="ml-3 bg-gray-100 px-3 py-1 h-10 border-black border-[1px] "
           onClick={startVideoCall}
         >
-          Call
+          Zadzwoń
         </button>
         {callButton == true ? (
           <button
-            className="ml-3 bg-gray-100 px-3 py-1 h-10 "
+            className="ml-3 bg-gray-100 px-3 py-1 h-10 border-black border-[1px]"
             onClick={(e) => openModal()}
           >
-            Answer call
+            Odbierz połączenie
           </button>
         ) : (
           ""
         )}
         {callButton == true ? (
           <button
-            className="ml-3 bg-gray-100 px-3 py-1 h-10 "
+            className="ml-3 bg-gray-100 px-3 py-1 h-10 border-black border-[1px]"
             onClick={(e) => setCallButton(null)}
           >
-            End call
+            Zakończ połączenie
           </button>
         ) : (
           ""

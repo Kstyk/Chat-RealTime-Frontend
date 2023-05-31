@@ -25,8 +25,8 @@ const Message = ({ message }) => {
           className={classNames(
             "relative max-w-xl rounded-lg px-2 py-1 text-gray-700 shadow",
             user?.email === message.to_user.email
-              ? "bg-gray-200"
-              : "bg-gray-100"
+              ? "bg-gray-300"
+              : "bg-gray-200"
           )}
         >
           <div className="flex items-end">
